@@ -41,7 +41,7 @@ public static void main(String[] args) {
 		 Properties config = new Properties();
 
 	        config.put(StreamsConfig.APPLICATION_ID_CONFIG, "bank-Transaction-backword");
-	        config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
+	        config.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG, "bankkafka:9092");
 	        config.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
 
 	        // we disable the cache to demonstrate all the "steps" involved in the transformation - not recommended in prod
@@ -57,7 +57,7 @@ public static void main(String[] args) {
 	        
 	        StreamsBuilder builder = new StreamsBuilder();
 
-	        KStream<String, JsonNode> bankTransactions = builder.stream("kafka-testing7",
+	        KStream<String, JsonNode> bankTransactions = builder.stream("bankthree",
 	                Consumed.with(Serdes.String(), jsonSerde));
 
 
@@ -80,7 +80,7 @@ public static void main(String[] args) {
 	                                .withValueSerde(jsonSerde)
 	                );
 
-	        bankBalance.toStream().to("kafka-testing8", Produced.with(Serdes.String(), jsonSerde));
+	        bankBalance.toStream().to("bankfour", Produced.with(Serdes.String(), jsonSerde));
 
 	        KafkaStreams streams = new KafkaStreams(builder.build(), config);
 	        streams.cleanUp();
