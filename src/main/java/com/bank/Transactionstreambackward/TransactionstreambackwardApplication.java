@@ -37,7 +37,9 @@ public static void main(String[] args) {
 		SpringApplication.run(TransactionstreambackwardApplication.class, args);
 		
 		
-		
+		/** Read the transactionoutput then send to another topics transactionstreamoutput
+		 * {"SenderAccountnumber":"256421","ReceiverAccountnumber":"2000","Report":"Transfered","Amountb":"600","time":"2022-01-21T11:44:58.587Z"}
+		 *   */ 
 		 Properties config = new Properties();
 
 	        config.put(StreamsConfig.APPLICATION_ID_CONFIG, "bank-Transaction-backword");
@@ -57,7 +59,7 @@ public static void main(String[] args) {
 	        
 	        StreamsBuilder builder = new StreamsBuilder();
 
-	        KStream<String, JsonNode> bankTransactions = builder.stream("bankthree",
+	        KStream<String, JsonNode> bankTransactions = builder.stream("transactionoutput",
 	                Consumed.with(Serdes.String(), jsonSerde));
 
 
@@ -80,7 +82,7 @@ public static void main(String[] args) {
 	                                .withValueSerde(jsonSerde)
 	                );
 
-	        bankBalance.toStream().to("bankfour", Produced.with(Serdes.String(), jsonSerde));
+	        bankBalance.toStream().to("transactionstreamoutput", Produced.with(Serdes.String(), jsonSerde));
 
 	        KafkaStreams streams = new KafkaStreams(builder.build(), config);
 	        streams.cleanUp();
